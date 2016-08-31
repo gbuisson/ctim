@@ -6,7 +6,7 @@
             [ctim.schemas.common :as schemas-common]
             [ctim.schemas.bundle :as p]
             [ctim.generators.common
-             :refer [complete leaf-generators maybe]
+             :refer [complete gen-vector leaf-generators maybe]
              :as common]
             [ctim.generators.id :as gen-id]
             [ctim.generators.schemas.actor-generators :refer [gen-actor]]
@@ -20,8 +20,6 @@
             [ctim.generators.schemas.sighting-generators :refer [gen-sighting]]
             [ctim.generators.schemas.ttp-generators :refer [gen-ttp]]
             [schema-generators.generators :as seg]))
-
-(def max-complexity (atom 1))
 
 (def object-keys [:actors
                   :campaigns
@@ -58,42 +56,44 @@
     ttps (assoc :ttps ttps)))
 
 
-(def gen-bundle
+(defn gen-bundle [max-complexity]
   (gen/fmap
    merge-entities
    (gen/tuple (seg/generator BaseStoredBundle leaf-generators)
               (gen-id/gen-short-id-of-type :bundle)
-              (maybe (gen/vector gen-actor 0 @max-complexity))
-              (maybe (gen/vector gen-campaign 0 @max-complexity))
-              (maybe (gen/vector gen-coa 0 @max-complexity))
-              (maybe (gen/vector gen-exploit-target 0 @max-complexity))
-              (maybe (gen/vector gen-feedback 0 @max-complexity))
-              (maybe (gen/vector gen-incident 0 @max-complexity))
-              (maybe (gen/vector gen-indicator 0 @max-complexity))
-              (maybe (gen/vector gen-judgement 0 @max-complexity))
-              (maybe (gen/vector gen-sighting 0 @max-complexity))
-              (maybe (gen/vector gen-ttp 0 @max-complexity)))))
+              (maybe (gen-vector gen-actor          max-complexity))
+              (maybe (gen-vector gen-campaign       max-complexity))
+              (maybe (gen-vector gen-coa            max-complexity))
+              (maybe (gen-vector gen-exploit-target max-complexity))
+              (maybe (gen-vector gen-feedback       max-complexity))
+              (maybe (gen-vector gen-incident       max-complexity))
+              (maybe (gen-vector gen-indicator      max-complexity))
+              (maybe (gen-vector gen-judgement      max-complexity))
+              (maybe (gen-vector gen-sighting       max-complexity))
+              (maybe (gen-vector gen-ttp            max-complexity)))))
 
-(defn gen-new-bundle_ [gen-id]
+(defn gen-new-bundle_ [gen-id max-complexity]
   (gen/fmap
    merge-entities
    (gen/tuple (seg/generator BaseNewBundle leaf-generators)
               gen-id
-              (maybe (gen/vector gen-actor 0 @max-complexity))
-              (maybe (gen/vector gen-campaign 0 @max-complexity))
-              (maybe (gen/vector gen-coa 0 @max-complexity))
-              (maybe (gen/vector gen-exploit-target 0 @max-complexity))
-              (maybe (gen/vector gen-feedback 0 @max-complexity))
-              (maybe (gen/vector gen-incident 0 @max-complexity))
-              (maybe (gen/vector gen-indicator 0 @max-complexity))
-              (maybe (gen/vector gen-judgement 0 @max-complexity))
-              (maybe (gen/vector gen-sighting 0 @max-complexity))
-              (maybe (gen/vector gen-ttp 0 @max-complexity)))))
+              (maybe (gen-vector gen-actor          max-complexity))
+              (maybe (gen-vector gen-campaign       max-complexity))
+              (maybe (gen-vector gen-coa            max-complexity))
+              (maybe (gen-vector gen-exploit-target max-complexity))
+              (maybe (gen-vector gen-feedback       max-complexity))
+              (maybe (gen-vector gen-incident       max-complexity))
+              (maybe (gen-vector gen-indicator      max-complexity))
+              (maybe (gen-vector gen-judgement      max-complexity))
+              (maybe (gen-vector gen-sighting       max-complexity))
+              (maybe (gen-vector gen-ttp            max-complexity)))))
 
-(def gen-new-bundle
+(defn gen-new-bundle [max-complexity]
   (gen-new-bundle_
-   (maybe (gen-id/gen-short-id-of-type :bundle))))
+   (maybe (gen-id/gen-short-id-of-type :bundle))
+   max-complexity))
 
-(def gen-new-bundle-with-id
+(defn gen-new-bundle-with-id [max-complexity]
   (gen-new-bundle_
-   (gen-id/gen-short-id-of-type :bundle)))
+   (gen-id/gen-short-id-of-type :bundle)
+   max-complexity))

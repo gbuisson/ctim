@@ -32,3 +32,8 @@
 (def gen-valid-time-tuple
   (gen/tuple (maybe (get leaf-generators s/Inst))
              (maybe (get leaf-generators s/Inst))))
+
+(defn gen-vector [generator max-complexity]
+  (gen/bind (gen/choose 0 max-complexity)
+            (fn [mc]
+              (gen/vector generator 0 mc))))
